@@ -1,10 +1,10 @@
 #include <WiFi.h>
 #include <M5EPD.h>
 #include <PubSubClient.h>
-#include <ESPmDNS.h>
 #include "FS.h"
 #include "SPIFFS.h"
 #include "connect_wifi.h"
+#include "init_mdns.h"
 
 #define FONT_SIZE 32
 #define MDNS_NAME "m5paper-dashboard"
@@ -44,16 +44,6 @@ void reconnect() {
       delay(5000);
     }
   }
-}
-
-void initMDNS(const char* hostname)
-{
-  Serial.print("mDNS server instancing.");
-  while (!MDNS.begin(hostname)) {
-    Serial.print(".");
-    delay(300);
-  }
-  Serial.println("success!");
 }
 
 void setup()
