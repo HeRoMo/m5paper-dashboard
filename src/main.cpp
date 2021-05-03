@@ -4,6 +4,7 @@
 #include <ESPmDNS.h>
 #include "FS.h"
 #include "SPIFFS.h"
+#include "connect_wifi.h"
 
 #define FONT_SIZE 32
 #define MDNS_NAME "m5paper-dashboard"
@@ -22,7 +23,6 @@ void callback(char* topic, byte* payload, unsigned int length) {
   canvas.pushCanvas(0,0,UPDATE_MODE_GC16);
 }
 
-WiFiClient wifiClient;
 PubSubClient mqttClient(wifiClient);
 
 void reconnect() {
@@ -44,17 +44,6 @@ void reconnect() {
       delay(5000);
     }
   }
-}
-
-void connectWifi(const char* ssid, const char* password)
-{
-  WiFi.begin(ssid, password);
-  Serial.print("WiFi connecting.");
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(1500);
-    Serial.print(".");
-  }
-  Serial.println("success!");
 }
 
 void initMDNS(const char* hostname)
