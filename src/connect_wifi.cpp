@@ -2,7 +2,9 @@
 //
 // This software is released under the MIT License.
 // https://opensource.org/licenses/MIT
-#include <WiFi.h>
+#include "connect_wifi.h"
+
+WiFiClient wifiClient;
 
 void connectWifi(const char* ssid, const char* password)
 {

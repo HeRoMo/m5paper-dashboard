@@ -5,6 +5,6 @@
 
 #include <WiFi.h>
 
-WiFiClient wifiClient;
+extern WiFiClient wifiClient;
 
 void connectWifi(const char* ssid, const char* password);
