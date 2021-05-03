@@ -8,6 +8,7 @@
 
 #define FONT_SIZE 32
 #define MDNS_NAME "m5paper-dashboard"
+#define MQTT_MAX_PACKET_SIZE 2048
 // #define WIFI_SSID // define in platformio.ini
 // #define WIFI_PASSWORD // define in platformio.ini
 // #define MQTT_BROKER // define in platformio.ini
@@ -20,7 +21,7 @@ void callback(char* topic, byte* payload, unsigned int length) {
   String message = String((char*) payload);
   Serial.println(message);
   canvas.drawString(message, 45, 35);
-  canvas.pushCanvas(0,0,UPDATE_MODE_GC16);
+  canvas.pushCanvas(0,0,UPDATE_MODE_GLR16);
 }
 
 PubSubClient mqttClient(wifiClient);
@@ -33,9 +34,11 @@ void reconnect() {
     if (mqttClient.connect("arduinoClient")) {
       Serial.println("connected");
       // Once connected, publish an announcement...
-      mqttClient.publish("outTopic","hello world");
+      mqttClient.publish("log", "Dashboard is connected.");
       // ... and resubscribe
-      mqttClient.subscribe("inTopic");
+      mqttClient.subscribe("calendar", 1);
+      mqttClient.subscribe("todo", 1);
+      mqttClient.subscribe("inTopic", 1);
     } else {
       Serial.print("failed, rc=");
       Serial.print(mqttClient.state());
@@ -49,13 +52,13 @@ void reconnect() {
 void setup()
 {
   M5.begin();
+  M5.RTC.begin();
   M5.EPD.SetRotation(0);
   M5.EPD.Clear(true);
 
   connectWifi(WIFI_SSID, WIFI_PASSWORD);
   initMDNS(MDNS_NAME);
 
-  M5.RTC.begin();
   canvas.loadFont("/font.ttf", SD);
   canvas.createCanvas(960, 540);
   canvas.createRender(FONT_SIZE, 256);
@@ -65,6 +68,7 @@ void setup()
   Serial.print(MQTT_BROKER);
   Serial.println(" is " + ip.toString());
   mqttClient.setServer(ip, 1883);
+  mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
   mqttClient.setCallback(callback);
 }
 
