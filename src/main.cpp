@@ -1,10 +1,13 @@
 #include <WiFi.h>
 #include <M5EPD.h>
 #include <PubSubClient.h>
+#include <ArduinoJson.h>
 #include "FS.h"
 #include "SPIFFS.h"
 #include "connect_wifi.h"
 #include "init_mdns.h"
+#include "EventView.h"
+#include "TodoView.h"
 
 #define FONT_SIZE 32
 #define MDNS_NAME "m5paper-dashboard"
@@ -13,15 +16,21 @@
 // #define WIFI_PASSWORD // define in platformio.ini
 // #define MQTT_BROKER // define in platformio.ini
 
-M5EPD_Canvas canvas(&M5.EPD);
-
 void callback(char* topic, byte* payload, unsigned int length) {
   payload[length] = '\0';
   Serial.print("Message arrived [" + String(topic) + "] ");
   String message = String((char*) payload);
   Serial.println(message);
-  canvas.drawString(message, 45, 35);
-  canvas.pushCanvas(0,0,UPDATE_MODE_GLR16);
+  DynamicJsonDocument doc(MQTT_MAX_PACKET_SIZE);
+
+  deserializeJson(doc, message);
+  serializeJsonPretty(doc, Serial);
+
+  if (strcmp(topic,"calendar")==0) {
+    showEvents(30, 35, doc);
+  } else if (strcmp(topic,"todo")==0) {
+    showTodos(30, 200, doc);
+  }
 }
 
 PubSubClient mqttClient(wifiClient);
@@ -58,11 +67,6 @@ void setup()
 
   connectWifi(WIFI_SSID, WIFI_PASSWORD);
   initMDNS(MDNS_NAME);
-
-  canvas.loadFont("/font.ttf", SD);
-  canvas.createCanvas(960, 540);
-  canvas.createRender(FONT_SIZE, 256);
-  canvas.setTextSize(FONT_SIZE);
 
   IPAddress ip = MDNS.queryHost(MQTT_BROKER);
   Serial.print(MQTT_BROKER);
