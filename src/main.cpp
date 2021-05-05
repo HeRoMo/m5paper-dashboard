@@ -27,9 +27,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   serializeJsonPretty(doc, Serial);
 
   if (strcmp(topic,"calendar")==0) {
-    showEvents(30, 35, doc);
+    showEvents(0, 50, doc);
   } else if (strcmp(topic,"todo")==0) {
-    showTodos(30, 200, doc);
+    showTodos(20, 250, doc);
   }
 }
 

@@ -18,4 +18,9 @@ void showTodos(int32_t x, int32_t y, DynamicJsonDocument doc) {
     todoView.show();
     i++;
   }
+  for (;i < 3; i++) {
+    JsonVariant blank;
+    TodoItem todoView(x, y + (ListItem::ITEM_FONT_SIZE + 3 + ListItem::ITEM_MARGIN * 2) * i, blank);
+    todoView.blank();
+  }
 }
