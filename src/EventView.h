@@ -6,19 +6,12 @@
 #ifndef _EVENT_VIEW_H_
 #define _EVENT_VIEW_H_
 
-#include <ArduinoJson.h>
-#include <M5EPD.h>
+#include "ListItem.h"
 
-class EventItem {
-  private:
-    int x;
-    int y;
-    JsonVariant event;
-    M5EPD_Canvas canvas;
-
+class EventItem : public ListItem
+{
   public:
-    EventItem(int32_t x, int32_t y, JsonVariant event);
-    ~EventItem();
+    EventItem(int32_t x, int32_t y, JsonVariant event): ListItem(x, y, event) {};
     void show();
 };
 

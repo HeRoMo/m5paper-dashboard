@@ -6,19 +6,12 @@
 #ifndef _TODO_VIEW_H_
 #define _TODO_VIEW_H_
 
-#include <ArduinoJson.h>
-#include <M5EPD.h>
+#include "ListItem.h"
 
-class TodoItem {
-  private:
-    int x;
-    int y;
-    JsonVariant event;
-    M5EPD_Canvas canvas;
-
+class TodoItem : public ListItem
+{
   public:
-    TodoItem(int32_t x, int32_t y, JsonVariant event);
-    ~TodoItem();
+    TodoItem(int32_t x, int32_t y, JsonVariant event): ListItem(x, y, event) {};
     void show();
 };
 
