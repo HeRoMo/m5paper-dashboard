@@ -8,6 +8,7 @@
 #include "init_mdns.h"
 #include "EventView.h"
 #include "TodoView.h"
+#include "headers.h"
 
 #define FONT_SIZE 32
 #define MDNS_NAME "m5paper-dashboard"
@@ -27,9 +28,9 @@ void callback(char* topic, byte* payload, unsigned int length) {
   serializeJsonPretty(doc, Serial);
 
   if (strcmp(topic,"calendar")==0) {
-    showEvents(0, 50, doc);
+    showEvents(0, 120, doc);
   } else if (strcmp(topic,"todo")==0) {
-    showTodos(20, 250, doc);
+    showTodos(20, 320, doc);
   }
 }
 
@@ -64,6 +65,10 @@ void setup()
   M5.RTC.begin();
   M5.EPD.SetRotation(0);
   M5.EPD.Clear(true);
+
+  drawHeader(0, 60, 15, "My Dashboard");
+  drawHeader(65, 50, 10, "Event List");
+  drawHeader(270, 50, 10, "Todo List");
 
   connectWifi(WIFI_SSID, WIFI_PASSWORD);
   initMDNS(MDNS_NAME);
