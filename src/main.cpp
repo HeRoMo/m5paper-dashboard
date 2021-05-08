@@ -9,6 +9,7 @@
 #include "EventView.h"
 #include "TodoView.h"
 #include "headers.h"
+#include "time_util.h"
 
 #define FONT_SIZE 32
 #define MDNS_NAME "m5paper-dashboard"
@@ -41,7 +42,7 @@ void reconnect() {
   while (!mqttClient.connected()) {
     Serial.print("Attempting MQTT connection...");
     // Attempt to connect
-    if (mqttClient.connect("arduinoClient")) {
+    if (mqttClient.connect(MDNS_NAME)) {
       Serial.println("connected");
       // Once connected, publish an announcement...
       mqttClient.publish("log", "Dashboard is connected.");
@@ -58,6 +59,8 @@ void reconnect() {
     }
   }
 }
+
+static const int JST = 3600 * 9;
 
 void setup()
 {
@@ -79,10 +82,23 @@ void setup()
   mqttClient.setServer(ip, 1883);
   mqttClient.setBufferSize(MQTT_MAX_PACKET_SIZE);
   mqttClient.setCallback(callback);
+
+  configTime( JST, 0, "ntp.nict.jp", "ntp.jst.mfeed.ad.jp");
+  delay(2000);
+  setupRTCTime();
 }
+
+RTC_SLOW_ATTR bool ntpDataFlag = false;
+rtc_time_t RTCtime;
+rtc_date_t RTCDate;
+char lastTime[23] = "0000/00/00 (000) 00:00";
 
 void loop()
 {
+  M5.RTC.getTime(&RTCtime);
+  M5.RTC.getDate(&RTCDate);
+  outputTimtToSerial(lastTime);
+
   if (!mqttClient.connected()) {
     reconnect();
   }
