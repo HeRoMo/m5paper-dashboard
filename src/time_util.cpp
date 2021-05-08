@@ -10,10 +10,11 @@ struct tm *tm;
 
 static const char *wd[7] = {"Sun", "Mon", "Tue", "Wed", "Thr", "Fri", "Sat"};
 
-void showDateTime(char* timeStr) {
-  int width = 360;
-  int height = 30;
+void drawDateTime(char* timeStr) {
+  int width = 475;
+  int height = 40;
   int color = 15;
+  int ofsetY = (60 - height) / 2;
   int fontSize = height;
   M5EPD_Canvas canvas(&M5.EPD);
   canvas.loadFont("/font.ttf", SD);
@@ -23,7 +24,7 @@ void showDateTime(char* timeStr) {
   canvas.setTextSize(fontSize);
   canvas.setTextColor(0, color);
   canvas.drawString(timeStr, 0, 0);
-  canvas.pushCanvas(960 - width - 20, 25, UPDATE_MODE_A2);
+  canvas.pushCanvas(20, ofsetY, UPDATE_MODE_A2);
   canvas.deleteCanvas();
 }
 
@@ -42,7 +43,7 @@ void setupRTCTime() {
   M5.RTC.setDate(&RTCDate);
 }
 
-void outputTimtToSerial(char* lastTime) {
+void showDateTime(char* lastTime) {
   char currentTime[23];
 
   sprintf(currentTime, "%d/%02d/%02d (%s) %02d:%02d",
@@ -51,7 +52,7 @@ void outputTimtToSerial(char* lastTime) {
           RTCtime.hour, RTCtime.min);
   if (strcmp(lastTime, currentTime) != 0) {
     Serial.println(currentTime);
-    showDateTime(currentTime);
+    drawDateTime(currentTime);
     strcpy(lastTime, currentTime);
   }
 }

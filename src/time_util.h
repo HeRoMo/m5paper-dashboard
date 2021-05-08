@@ -11,5 +11,5 @@ extern rtc_time_t RTCtime;
 extern rtc_date_t RTCDate;
 
 void setupRTCTime();
-void outputTimtToSerial(char* lastTime);
+void showDateTime(char* lastTime);
 #endif

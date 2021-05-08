@@ -10,6 +10,7 @@
 #include "TodoView.h"
 #include "headers.h"
 #include "time_util.h"
+#include "battery_util.h"
 
 #define FONT_SIZE 32
 #define MDNS_NAME "m5paper-dashboard"
@@ -69,7 +70,7 @@ void setup()
   M5.EPD.SetRotation(0);
   M5.EPD.Clear(true);
 
-  drawHeader(0, 60, 15, "My Dashboard");
+  drawHeader(0, 60, 15, "");
   drawHeader(65, 50, 10, "Event List");
   drawHeader(270, 50, 10, "Todo List");
 
@@ -92,12 +93,14 @@ RTC_SLOW_ATTR bool ntpDataFlag = false;
 rtc_time_t RTCtime;
 rtc_date_t RTCDate;
 char lastTime[23] = "0000/00/00 (000) 00:00";
+char lastBattery[5] = "  0%";
 
 void loop()
 {
   M5.RTC.getTime(&RTCtime);
   M5.RTC.getDate(&RTCDate);
-  outputTimtToSerial(lastTime);
+  showDateTime(lastTime);
+  showBattery(lastBattery);
 
   if (!mqttClient.connected()) {
     reconnect();
