@@ -7,9 +7,12 @@
 
 void EventItem::show() {
   bool current = item["current"].as<bool>();
+  bool today = item["today"].as<bool>();
   if (current) {
     canvas.fillCanvas(2);
     canvas.setTextColor(15);
+  } else if (!today) {
+    canvas.setTextColor(6);
   }
   canvas.drawString("[" + item["startShort"].as<String>() + "]", 20, ITEM_MARGIN);
   canvas.drawString(item["summary"].as<char*>(), 240, ITEM_MARGIN);
